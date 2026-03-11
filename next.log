@@ -1,0 +1,22 @@
+⚠ Warning: Next.js inferred your workspace root, but it may not be correct.
+ We detected multiple lockfiles and selected the directory of /Users/riedelruben/package-lock.json as the root directory.
+ To silence this warning, set `turbopack.root` in your Next.js config, or consider removing one of the lockfiles if it's not needed.
+   See https://nextjs.org/docs/app/api-reference/config/next-config-js/turbopack#root-directory for more information.
+ Detected additional lockfiles: 
+   * /Users/riedelruben/Desktop/ENGPRO/SeaLab/seatech-je/package-lock.json
+   * /Users/riedelruben/Desktop/ENGPRO/SeaLab/package-lock.json
+
+▲ Next.js 16.1.6 (Turbopack)
+- Local:         http://localhost:3000
+- Network:       http://172.20.10.2:3000
+
+✓ Starting...
+✓ Ready in 499ms
+ GET / 200 in 447ms (compile: 150ms, render: 297ms)
+ HEAD / 200 in 25ms (compile: 2ms, render: 23ms)
+ POST /api/contact 500 in 76ms (compile: 68ms, render: 9ms)
+✓ Compiled in 249ms
+✓ Compiled in 15ms
+ GET / 200 in 111ms (compile: 37ms, render: 74ms)
+✓ Compiled in 14ms
+ GET / 200 in 98ms (compile: 33ms, render: 64ms)

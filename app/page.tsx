@@ -8,12 +8,35 @@ export default function App() {
   const [isContactModalOpen, setIsContactModalOpen] = useState(false);
   const [isLegalModalOpen, setIsLegalModalOpen] = useState(false);
   const [isPrivacyModalOpen, setIsPrivacyModalOpen] = useState(false);
+  const [expandedCards, setExpandedCards] = useState<{[key:string]: boolean}>({});
+
+  const toggleCard = (id: string) => {
+    setExpandedCards((prev) => ({ ...prev, [id]: !prev[id] }));
+  };
 
   // Fonction pour gérer la soumission du formulaire (simulation pour l'instant)
   const handleContactSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    alert("Message envoyé avec succès ! (Ceci est une simulation)");
-    setIsContactModalOpen(false);
+    const form = e.currentTarget;
+    const fd = new FormData(form);
+    const prenom = String(fd.get('prenom') || '');
+    const nom = String(fd.get('nom') || '');
+    const email = String(fd.get('email') || '');
+    const message = String(fd.get('message') || '');
+
+    const to = 'sealab.seatech@gmail.com';
+    const subject = `Demande de devis - ${prenom} ${nom}`;
+    const bodyPlain = `Nom: ${prenom} ${nom}\nEmail: ${email}\n\n${message}`;
+    const mailto = `mailto:${encodeURIComponent(to)}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(bodyPlain)}`;
+
+    // Open user's mail client with prefilled message
+    try {
+      window.location.href = mailto;
+      setIsContactModalOpen(false);
+      form.reset();
+    } catch (err) {
+      alert(`Impossible d'ouvrir le client mail. Copiez manuellement : ${to}`);
+    }
   };
 
   return (
@@ -44,6 +67,10 @@ export default function App() {
         <div className="absolute top-0 right-0 -translate-y-12 translate-x-1/3">
           <div className="w-[600px] h-[600px] rounded-full bg-blue-50/50 blur-3xl"></div>
         </div>
+        {/* Image grande en haut à droite */}
+        <div className="absolute top-6 right-6 z-20 pointer-events-none">
+          <img src="/avionbat.png" alt="Avion" className="w-56 h-56 sm:w-96 sm:h-96 md:w-[640px] md:h-[640px] lg:w-[820px] lg:h-[820px] object-contain" />
+        </div>
         
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
           <div className="max-w-3xl">
@@ -61,15 +88,12 @@ export default function App() {
               Confiez vos études, développements et projets mécaniques aux futurs ingénieurs de l'école SeaTech. Innovation, rigueur et dynamisme.
             </p>
             <div className="flex flex-col sm:flex-row gap-4">
-              <a href="#services" className="bg-blue-600 text-white px-8 py-4 rounded-full font-semibold hover:bg-blue-700 transition-all shadow-lg shadow-blue-600/20 flex items-center justify-center gap-2 group">
-                Découvrir nos services
-                <ArrowRight size={20} className="group-hover:translate-x-1 transition-transform" />
-              </a>
-              <button 
+              <button
                 onClick={() => setIsContactModalOpen(true)}
-                className="bg-white text-slate-700 border border-slate-200 px-8 py-4 rounded-full font-semibold hover:bg-slate-50 transition-all flex items-center justify-center"
+                className="bg-blue-600 text-white px-8 py-4 rounded-full font-semibold hover:bg-blue-700 transition-all shadow-lg shadow-blue-600/20 flex items-center justify-center gap-2 group"
               >
                 Demander un devis
+                <ArrowRight size={20} className="group-hover:translate-x-1 transition-transform" />
               </button>
             </div>
           </div>
@@ -82,8 +106,7 @@ export default function App() {
           <div className="text-center max-w-2xl mx-auto mb-16">
             <h2 className="text-3xl font-bold text-slate-900 mb-4">Nos Domaines d'Expertise</h2>
             <p className="text-slate-600">
-              Forts des enseignements de pointe dispensés à SeaTech, nos intervenants vous accompagnent sur des missions techniques complexes.
-            </p>
+              Les étudiants de SeaTech mettent leurs compétences au service de vos projets techniques.            </p>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
@@ -96,13 +119,23 @@ export default function App() {
                 Développement d'applications web et mobiles, création de sites vitrines, bases de données et solutions logicielles sur mesure.
               </p>
               {/* Texte supplémentaire qui s'affiche au survol */}
-              <div className="grid grid-rows-[0fr] group-hover:grid-rows-[1fr] transition-[grid-template-rows] duration-500 ease-in-out">
+              <div className="hidden sm:grid grid-rows-[0fr] group-hover:grid-rows-[1fr] transition-[grid-template-rows] duration-500 ease-in-out">
                 <div className="overflow-hidden">
                   <p className="pt-4 text-slate-500 text-sm border-t border-slate-100 mt-4">
-                    Notre équipe maîtrise des technologies modernes telles que React, Next.js, Node.js et Python. Nous concevons des outils internes optimisés et des plateformes e-commerce performantes.
+                    Notre équipe maîtrise des technologies modernes telles que Next.js et Python. Nous concevons des outils internes optimisés pour vos projets.
                   </p>
                 </div>
               </div>
+                <div className={`grid sm:hidden ${expandedCards['expertise1'] ? 'grid-rows-[1fr]' : 'grid-rows-[0fr]'} transition-[grid-template-rows] duration-500 ease-in-out`}>
+                  <div className="overflow-hidden">
+                    <p className="pt-4 text-slate-500 text-sm border-t border-slate-100 mt-4">
+                      Notre équipe maîtrise des technologies modernes telles que Next.js et Python. Nous concevons des outils internes optimisés pour vos projets.
+                    </p>
+                  </div>
+                </div>
+                <div className="mt-3 sm:hidden">
+                  <button onClick={() => toggleCard('expertise1')} className="text-sm font-medium text-blue-600">{expandedCards['expertise1'] ? 'Voir moins' : 'Voir plus'}</button>
+                </div>
             </div>
 
             <div className="bg-white p-8 rounded-2xl shadow-sm border border-slate-100 hover:shadow-lg hover:-translate-y-1 transition-all duration-300 group cursor-default">
@@ -114,13 +147,23 @@ export default function App() {
                 Modélisation CAO, études de résistance des matériaux, conception de pièces et systèmes mécaniques innovants.
               </p>
               {/* Texte supplémentaire qui s'affiche au survol */}
-              <div className="grid grid-rows-[0fr] group-hover:grid-rows-[1fr] transition-[grid-template-rows] duration-500 ease-in-out">
+              <div className="hidden sm:grid grid-rows-[0fr] group-hover:grid-rows-[1fr] transition-[grid-template-rows] duration-500 ease-in-out">
                 <div className="overflow-hidden">
                   <p className="pt-4 text-slate-500 text-sm border-t border-slate-100 mt-4">
-                    Utilisation de logiciels professionnels (SolidWorks, Catia). Nous réalisons également de la simulation numérique (CFD, éléments finis) et du prototypage rapide via impression 3D.
+                    Utilisation de logiciels professionnels (SolidWorks). Nous réalisons également de la simulation numérique (éléments finis) et du prototypage rapide via impression 3D.
                   </p>
                 </div>
               </div>
+                <div className={`grid sm:hidden ${expandedCards['expertise2'] ? 'grid-rows-[1fr]' : 'grid-rows-[0fr]'} transition-[grid-template-rows] duration-500 ease-in-out`}>
+                  <div className="overflow-hidden">
+                    <p className="pt-4 text-slate-500 text-sm border-t border-slate-100 mt-4">
+                      Utilisation de logiciels professionnels (SolidWorks). Nous réalisons également de la simulation numérique (éléments finis) et du prototypage rapide via impression 3D.
+                    </p>
+                  </div>
+                </div>
+                <div className="mt-3 sm:hidden">
+                  <button onClick={() => toggleCard('expertise2')} className="text-sm font-medium text-blue-600">{expandedCards['expertise2'] ? 'Voir moins' : 'Voir plus'}</button>
+                </div>
             </div>
 
             <div className="bg-white p-8 rounded-2xl shadow-sm border border-slate-100 hover:shadow-lg hover:-translate-y-1 transition-all duration-300 group cursor-default">
@@ -129,16 +172,26 @@ export default function App() {
               </div>
               <h3 className="text-xl font-bold text-slate-900 mb-3">Systèmes Électroniques</h3>
               <p className="text-slate-600">
-                Conception de circuits, systèmes embarqués, IoT et automatisation de processus industriels.
+                Conception de circuits, systèmes embarqués.
               </p>
               {/* Texte supplémentaire qui s'affiche au survol */}
-              <div className="grid grid-rows-[0fr] group-hover:grid-rows-[1fr] transition-[grid-template-rows] duration-500 ease-in-out">
+              <div className="hidden sm:grid grid-rows-[0fr] group-hover:grid-rows-[1fr] transition-[grid-template-rows] duration-500 ease-in-out">
                 <div className="overflow-hidden">
                   <p className="pt-4 text-slate-500 text-sm border-t border-slate-100 mt-4">
-                    Programmation de microcontrôleurs (Arduino, STM32), routage de cartes PCB, et intégration de capteurs pour créer des solutions connectées, intelligentes et autonomes.
+                    Programmation de microcontrôleurs (Arduino, STM32), et intégration de capteurs pour créer des solutions connectées, intelligentes et autonomes.
                   </p>
                 </div>
               </div>
+                <div className={`grid sm:hidden ${expandedCards['expertise3'] ? 'grid-rows-[1fr]' : 'grid-rows-[0fr]'} transition-[grid-template-rows] duration-500 ease-in-out`}>
+                  <div className="overflow-hidden">
+                    <p className="pt-4 text-slate-500 text-sm border-t border-slate-100 mt-4">
+                      Programmation de microcontrôleurs (Arduino, STM32), et intégration de capteurs pour créer des solutions connectées, intelligentes et autonomes.
+                    </p>
+                  </div>
+                </div>
+                <div className="mt-3 sm:hidden">
+                  <button onClick={() => toggleCard('expertise3')} className="text-sm font-medium text-blue-600">{expandedCards['expertise3'] ? 'Voir moins' : 'Voir plus'}</button>
+                </div>
             </div>
           </div>
         </div>
@@ -275,22 +328,22 @@ export default function App() {
               <div className="grid grid-cols-2 gap-4">
                 <div className="space-y-1.5">
                   <label htmlFor="prenom" className="text-sm font-medium text-slate-700">Prénom</label>
-                  <input type="text" id="prenom" required className="w-full px-4 py-2.5 rounded-lg border border-slate-200 focus:border-blue-600 focus:ring-2 focus:ring-blue-600/20 outline-none transition-all" placeholder="Jean" />
+                  <input name="prenom" type="text" id="prenom" required className="w-full px-4 py-2.5 rounded-lg border border-slate-200 focus:border-blue-600 focus:ring-2 focus:ring-blue-600/20 outline-none transition-all" placeholder="Jean" />
                 </div>
                 <div className="space-y-1.5">
                   <label htmlFor="nom" className="text-sm font-medium text-slate-700">Nom</label>
-                  <input type="text" id="nom" required className="w-full px-4 py-2.5 rounded-lg border border-slate-200 focus:border-blue-600 focus:ring-2 focus:ring-blue-600/20 outline-none transition-all" placeholder="Dupont" />
+                  <input name="nom" type="text" id="nom" required className="w-full px-4 py-2.5 rounded-lg border border-slate-200 focus:border-blue-600 focus:ring-2 focus:ring-blue-600/20 outline-none transition-all" placeholder="Dupont" />
                 </div>
               </div>
               
               <div className="space-y-1.5">
                 <label htmlFor="email" className="text-sm font-medium text-slate-700">Adresse e-mail</label>
-                <input type="email" id="email" required className="w-full px-4 py-2.5 rounded-lg border border-slate-200 focus:border-blue-600 focus:ring-2 focus:ring-blue-600/20 outline-none transition-all" placeholder="jean.dupont@exemple.fr" />
+                <input name="email" type="email" id="email" required className="w-full px-4 py-2.5 rounded-lg border border-slate-200 focus:border-blue-600 focus:ring-2 focus:ring-blue-600/20 outline-none transition-all" placeholder="jean.dupont@exemple.fr" />
               </div>
               
               <div className="space-y-1.5">
                 <label htmlFor="message" className="text-sm font-medium text-slate-700">Votre message</label>
-                <textarea id="message" required rows={4} className="w-full px-4 py-2.5 rounded-lg border border-slate-200 focus:border-blue-600 focus:ring-2 focus:ring-blue-600/20 outline-none transition-all resize-none" placeholder="Décrivez-nous votre projet ou votre besoin..."></textarea>
+                <textarea name="message" id="message" required rows={4} className="w-full px-4 py-2.5 rounded-lg border border-slate-200 focus:border-blue-600 focus:ring-2 focus:ring-blue-600/20 outline-none transition-all resize-none" placeholder="Décrivez-nous votre projet ou votre besoin..."></textarea>
               </div>
               
               <button type="submit" className="w-full bg-blue-600 text-white px-6 py-3.5 rounded-lg font-semibold hover:bg-blue-700 transition-colors flex items-center justify-center gap-2 mt-4 shadow-md hover:shadow-lg">
@@ -323,7 +376,7 @@ export default function App() {
             
             <div className="p-6 overflow-y-auto text-slate-600 space-y-4">
               <h4 className="font-bold text-slate-900">1. Éditeur du site</h4>
-              <p>Le présent site est édité par SeaLab Junior-Entreprise, association loi 1901 à but non lucratif.</p>
+              <p>Le présent site est édité par SeaLab Junior-Entreprise.</p>
               <p><strong>Siège social :</strong> Campus de La Garde, Avenue de l'Université, 83130 La Garde, France.</p>
               <p><strong>Email :</strong> sealab.seatech@gmail.com</p>
               <p><strong>Téléphone :</strong> +33 (0)7 68 74 31 93</p>
@@ -332,7 +385,7 @@ export default function App() {
               <p>Le directeur de la publication est le Président en exercice de SeaLab Junior-Entreprise.</p>
               
               <h4 className="font-bold text-slate-900 mt-6">3. Hébergement</h4>
-              <p>Ce site est hébergé par [Nom de l'hébergeur, ex: Vercel Inc.], [Adresse de l'hébergeur].</p>
+              <p>Ce site est hébergé par Vercel.</p>
               
               <h4 className="font-bold text-slate-900 mt-6">4. Propriété intellectuelle</h4>
               <p>L'ensemble de ce site relève de la législation française et internationale sur le droit d'auteur et la propriété intellectuelle. Tous les droits de reproduction sont réservés, y compris pour les documents téléchargeables et les représentations iconographiques et photographiques.</p>
