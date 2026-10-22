@@ -13,7 +13,7 @@ export const site = {
   campus: "Campus de La Garde · Toulon",
   coordinates: "43°19′N · 6°04′E",
   brochure: "/plaquette-sealab.pdf",
-  brochureLabel: "PDF, 9,9 Mo",
+  brochureLabel: "PDF, 18,2 Mo",
 };
 
 // Informations légales (LCEN, RGPD). À tenir à jour : siège tel qu'inscrit dans les statuts.
