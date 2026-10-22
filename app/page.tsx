@@ -149,7 +149,12 @@ export default function Home() {
               </p>
             </div>
             <ul className="reveal mt-8 flex flex-wrap gap-2">
-              {["Association loi 1901", "Junior-Création CNJE", "Seule Junior-Entreprise de SeaTech"].map((b) => (
+              {[
+                "Association loi 1901",
+                "Junior-Création CNJE",
+                "Seule Junior-Entreprise de SeaTech",
+                "Les 6 filières représentées au bureau",
+              ].map((b) => (
                 <li
                   key={b}
                   className="rounded-full border border-navy/15 bg-white px-4 py-2 text-sm font-medium text-navy"

@@ -85,7 +85,7 @@ export default function PrestationsPage() {
         </nav>
       </PageHero>
 
-      <div id="catalogue" className="scroll-mt-16">
+      <div id="catalogue" className="scroll-mt-0">
         <PrestationsExplorer />
       </div>
 

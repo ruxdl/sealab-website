@@ -11,7 +11,7 @@ export const site = {
   president: "Ruben Riedel",
   school: "SeaTech, école d'ingénieurs de l'Université de Toulon",
   campus: "Campus de La Garde · Toulon",
-  coordinates: "43°08′N · 6°01′E",
+  coordinates: "43°19′N · 6°04′E",
   brochure: "/plaquette-sealab.pdf",
   brochureLabel: "PDF, 9,9 Mo",
 };
@@ -182,10 +182,13 @@ export const bilan = [
 
 export const bureau = [
   { role: "Président", name: "Ruben Riedel" },
-  { role: "Vice-Président", name: "Bollini--Danigo" },
+  { role: "Vice-Président", name: "Tom Bollini--Danigo" },
   { role: "Secrétaire général", name: "Théo Rieffel" },
   { role: "Trésorier", name: "Guillaume Cabanac" },
+  { role: "Responsable communication", name: "Louis Rouvery" },
 ];
+
+export const bureauFilieres = "Toutes les filières de SeaTech sont représentées au sein du bureau.";
 
 export const passation = [
   { title: "Repérage en 2A", text: "Les futurs membres du bureau sont identifiés dès la deuxième année." },

@@ -1,4 +1,4 @@
-import { atouts, faq, methode, site } from "../data/site";
+import { atouts, bureau, bureauFilieres, faq, methode, site } from "../data/site";
 import { filieres, poles, prestationsCount } from "../data/prestations";
 
 // /llms.txt : résumé du site en Markdown, destiné aux assistants IA (convention llmstxt.org).
@@ -17,6 +17,11 @@ export function GET() {
     `- Président : ${site.president}`,
     `- Localisation : SeaTech, ${site.campus} (${site.coordinates})`,
     `- Formulaire : ${site.url}/contact`,
+    "",
+    "## Bureau 2026-27",
+    "",
+    ...bureau.map((m) => `- ${m.role} : ${m.name}`),
+    `- ${bureauFilieres}`,
     "",
     "## Pages",
     "",

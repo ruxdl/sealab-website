@@ -1,45 +1,122 @@
 "use client";
 
 import Link from "next/link";
-import { useMemo, useState } from "react";
+import { useMemo, useRef, useState } from "react";
 import { ArrowRight, Search, X } from "lucide-react";
-import { poles, type Prestation } from "../data/prestations";
+import { poles, type Pole, type Prestation } from "../data/prestations";
 
 const normalize = (s: string) =>
   s
     .normalize("NFD")
     .replace(/\p{Diacritic}/gu, "")
-    .toLowerCase();
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, " ")
+    .trim();
 
-function matches(p: Prestation, domaine: string, query: string) {
-  if (!query) return true;
-  const haystack = normalize([p.title, p.description, domaine, ...(p.applications ?? []), ...p.tags].join(" "));
-  return normalize(query)
-    .split(/\s+/)
-    .filter(Boolean)
-    .every((word) => haystack.includes(word));
-}
+// Pluriels simples : « sites » → « site », « matériaux » → « materiau ».
+const stem = (w: string) => (w.length > 3 ? w.replace(/(aux|x|s)$/, (m) => (m === "aux" ? "au" : "")) : w);
+
+// Mots du langage courant → termes employés dans le catalogue.
+const synonyms: Record<string, string[]> = {
+  carbone: ["carbone", "ges", "emission"],
+  co2: ["carbone", "ges", "emission"],
+  ges: ["ges", "carbone"],
+  climat: ["carbone", "ges", "decarbonation"],
+  internet: ["web"],
+  site: ["site", "web"],
+  appli: ["application"],
+  app: ["application"],
+  cao: ["3d", "modelisation"],
+  plan: ["plan", "3d"],
+  simulation: ["simulation", "modelisation", "numerique", "calcul"],
+  calcul: ["calcul", "modelisation", "simulation"],
+  robot: ["robot", "robotique"],
+  drone: ["robot", "autonome"],
+  bateau: ["navale", "flottant", "maritime", "hydrodynamique"],
+  navire: ["navale", "flottant", "maritime"],
+  mer: ["marin", "maritime", "hydrographie", "navale"],
+  eau: ["fluide", "hydrodynamique", "ecoulement"],
+  capteur: ["capteur", "acquisition", "instrumentation"],
+  anglais: ["anglais", "traduction"],
+  traduire: ["traduction"],
+  marche: ["marche", "concurrence"],
+  concurrent: ["concurrence", "marche"],
+  financement: ["financement", "finance"],
+  subvention: ["financement", "aide"],
+  business: ["marche", "viabilite", "economique"],
+  environnement: ["environnement", "environnemental", "acv", "carbone"],
+  ecologie: ["environnement", "environnemental", "transition"],
+  donnee: ["donnee", "data"],
+  data: ["donnee", "data"],
+  logiciel: ["logiciel", "outil"],
+  automatiser: ["automatisation", "automatiser"],
+};
+
+const indexOf = (p: Prestation, domaine: string, pole: Pole) =>
+  " " +
+  normalize([p.title, p.description, domaine, pole.title, ...(p.applications ?? []), ...p.tags].join(" "))
+    .split(" ")
+    .map(stem)
+    .join(" ") +
+  " ";
+
+const stopwords = new Set(["de", "du", "des", "la", "le", "les", "un", "une", "et", "en", "pour", "sur", "au", "aux", "mon", "ma", "mes", "notre", "nos", "je"]);
+
+const terms = (query: string) =>
+  normalize(query)
+    .split(" ")
+    .filter((w) => (w.length > 1 || /\d/.test(w)) && !stopwords.has(w))
+    .map((w) => [...new Set([stem(w), ...(synonyms[stem(w)] ?? synonyms[w] ?? []).map(stem)])]);
+
+/** Nombre de mots de la recherche retrouvés dans la prestation. */
+const score = (haystack: string, query: string[][]) =>
+  // Mots courts (ACV, GES, 3D…) : mot entier ; sinon début de mot (« modél » trouve « modélisation »).
+  query.filter((alts) => alts.some((a) => haystack.includes(a.length <= 3 ? ` ${a} ` : ` ${a}`))).length;
+
+const suggestions = ["ACV", "Bilan carbone", "Modélisation 3D", "Site web", "Robotique", "Étude de marché", "Traduction"];
 
 export function PrestationsExplorer() {
   const [pole, setPole] = useState<string | null>(null);
   const [query, setQuery] = useState("");
+  const barRef = useRef<HTMLDivElement>(null);
 
-  const results = useMemo(
-    () =>
+  const { results, approximate } = useMemo(() => {
+    const q = terms(query);
+    const filter = (min: number) =>
       poles
         .filter((p) => !pole || p.id === pole)
         .map((p) => ({
           ...p,
           domaines: p.domaines
-            .map((d) => ({ ...d, prestations: d.prestations.filter((x) => matches(x, d.title, query)) }))
+            .map((d) => ({
+              ...d,
+              prestations: d.prestations.filter((x) => !q.length || score(indexOf(x, d.title, p), q) >= min),
+            }))
             .filter((d) => d.prestations.length > 0),
         }))
-        .filter((p) => p.domaines.length > 0),
-    [pole, query],
-  );
+        .filter((p) => p.domaines.length > 0);
+
+    // Tous les mots d'abord ; à défaut, au moins un mot (résultats approchants).
+    const exact = filter(q.length);
+    if (exact.length || !q.length) return { results: exact, approximate: false };
+    return { results: filter(1), approximate: true };
+  }, [pole, query]);
 
   const total = results.reduce((n, p) => n + p.domaines.reduce((m, d) => m + d.prestations.length, 0), 0);
   const filtered = Boolean(pole || query);
+
+  // Amène la barre de recherche en haut de l'écran pour que les résultats soient visibles.
+  const bringResultsIntoView = () => {
+    const bar = barRef.current;
+    if (bar && bar.getBoundingClientRect().top > 120) {
+      document.getElementById("catalogue")?.scrollIntoView({ behavior: "smooth" });
+    }
+  };
+
+  const search = (value: string) => {
+    setQuery(value);
+    bringResultsIntoView();
+  };
 
   const reset = () => {
     setPole(null);
@@ -48,7 +125,7 @@ export function PrestationsExplorer() {
 
   return (
     <div>
-      <div className="sticky top-16 z-30 border-b border-line bg-foam/90 backdrop-blur-xl lg:top-20">
+      <div ref={barRef} className="sticky top-16 z-30 border-b border-line bg-foam/90 backdrop-blur-xl lg:top-20">
         <div className="wrap flex flex-col gap-3 py-4">
           <div className="flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">
             <div role="group" aria-label="Filtrer par pôle" className="no-scrollbar -mx-1 flex gap-1.5 overflow-x-auto px-1">
@@ -75,14 +152,28 @@ export function PrestationsExplorer() {
               <input
                 type="search"
                 value={query}
-                onChange={(e) => setQuery(e.target.value)}
+                onChange={(e) => search(e.target.value)}
                 placeholder="Rechercher : ACV, 3D, site web…"
                 className="w-full rounded-full border-0 bg-white py-2.5 pr-4 pl-10 text-sm text-navy ring-1 ring-line placeholder:text-slate focus:ring-2 focus:ring-cyan focus:outline-none"
               />
             </label>
           </div>
-          <div className="flex items-center">
+          <div className="flex flex-wrap items-center gap-x-4 gap-y-2">
+            <div className="no-scrollbar -mx-1 flex gap-1.5 overflow-x-auto px-1">
+              <span className="eyebrow self-center pr-1 text-[0.65rem] text-slate">Suggestions</span>
+              {suggestions.map((s) => (
+                <button
+                  key={s}
+                  type="button"
+                  onClick={() => search(s)}
+                  className="shrink-0 rounded-full bg-cyan/10 px-3 py-1 text-xs whitespace-nowrap text-sea transition hover:bg-cyan/20"
+                >
+                  {s}
+                </button>
+              ))}
+            </div>
             <p className="ml-auto text-sm text-slate" aria-live="polite">
+              {approximate && total > 0 && <span className="mr-2">Résultats approchants :</span>}
               <strong className="font-semibold text-navy">{total}</strong> prestation{total > 1 ? "s" : ""}
               {filtered && (
                 <button type="button" onClick={reset} className="ml-3 inline-flex items-center gap-1 text-sea hover:text-navy">

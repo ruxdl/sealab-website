@@ -7,6 +7,7 @@ import {
   atouts,
   bilan,
   bureau,
+  bureauFilieres,
   histoire,
   passation,
   statutsCnje,
@@ -149,7 +150,13 @@ export default function AssociationPage() {
         <div className="isobaths text-cyan/[0.07]" aria-hidden />
         <div className="wrap relative grid gap-14 lg:grid-cols-12">
           <div className="lg:col-span-6">
-            <SectionTitle tone="dark" index="03" eyebrow="Notre équipe" title="Le bureau 2026-27" />
+            <SectionTitle
+              tone="dark"
+              index="03"
+              eyebrow="Notre équipe"
+              title="Le bureau 2026-27"
+              lead={bureauFilieres}
+            />
             <ul className="reveal mt-10 grid gap-3 sm:grid-cols-2">
               {bureau.map((m, i) => (
                 <li
@@ -160,11 +167,11 @@ export default function AssociationPage() {
                   <p className="mt-1 font-display text-xl font-semibold">{m.name}</p>
                 </li>
               ))}
+              <li className="flex items-center justify-between rounded-2xl bg-white/[0.06] p-6 ring-1 ring-white/10">
+                <p className="font-display text-xl font-semibold">Membres cotisants</p>
+                <p className="font-display text-4xl font-semibold text-cyan-light">16</p>
+              </li>
             </ul>
-            <div className="reveal mt-3 flex items-center justify-between rounded-2xl bg-white/[0.06] p-6 ring-1 ring-white/10">
-              <p className="font-display text-xl font-semibold">Membres cotisants</p>
-              <p className="font-display text-5xl font-semibold text-cyan-light">16</p>
-            </div>
           </div>
           <figure className="reveal relative self-center lg:col-span-6">
             <Image
