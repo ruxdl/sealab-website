@@ -1,36 +1,44 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Sea'Lab — site web
 
-## Getting Started
+Site de Sea'Lab, la Junior-Entreprise de SeaTech (Université de Toulon). Next.js 16 (App Router), React 19, Tailwind CSS 4.
 
-First, run the development server:
+## Lancer le site
 
 ```bash
+npm install
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Puis ouvrir http://localhost:3000. Build de production : `npm run build`.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Pages
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+| Route | Contenu |
+| --- | --- |
+| `/` | Accueil : présentation, pôles, exemples de missions, méthode, cibles, atouts, filières, réseau |
+| `/prestations` | Catalogue complet, filtrable par pôle et par recherche texte |
+| `/association` | Qui sommes-nous, parcours CNJE, histoire, bureau, passation |
+| `/rejoindre` | Adhésion des élèves : intérêt, rôles, relève |
+| `/contact` | Formulaire (ouvre la messagerie, sans backend), localisation, FAQ |
+| `/mentions-legales`, `/politique-de-confidentialite`, `/politique-cookies`, `/conditions-utilisation`, `/accessibilite` | Pages légales (LCEN, RGPD, cookies, CGU, accessibilité) |
+| `/llms.txt`, `/robots.txt`, `/sitemap.xml` | Lecture du site par les moteurs et assistants IA |
 
-## Learn More
+## Conformité
 
-To learn more about Next.js, take a look at the following resources:
+- Aucun cookie ni traceur : pas de bandeau de consentement nécessaire. En production, une Content Security Policy (`next.config.ts`) bloque toute ressource tierce. Ajouter un outil de mesure d'audience ou un contenu externe imposera de revoir cette politique et, le plus souvent, d'ajouter un module de consentement.
+- Les informations légales (siège, hébergeur, date de mise à jour) sont dans `legal` (`app/data/site.ts`).
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## Modifier le contenu
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+Les textes ne sont pas dans les pages mais dans deux fichiers :
 
-## Deploy on Vercel
+- `app/data/prestations.ts` : pôles, domaines, prestations, applications et filières.
+- `app/data/site.ts` : coordonnées, chiffres clés, méthode, atouts, histoire, bureau, passation, FAQ.
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+Les compteurs (nombre de prestations, prestations par filière) se recalculent automatiquement.
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+## Ressources
+
+- `public/brand/` : logo SL (version claire et foncée), logos partenaires, lignes de niveau (isobathes).
+- `public/images/` : photo de l'équipe, campus SeaTech.
+- `public/plaquette-sealab.pdf` : plaquette de prestations téléchargeable.

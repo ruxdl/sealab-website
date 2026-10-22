@@ -1,334 +1,461 @@
-"use client";
-import React, { useState, useEffect, useRef } from 'react';
-import { Code, Cpu, Wrench, ArrowRight, Mail, MapPin, Phone, X, Send, Menu, ChevronRight } from 'lucide-react';
+import type { Metadata } from "next";
+import Image from "next/image";
+import Link from "next/link";
+import {
+  ArrowRight,
+  ArrowUpRight,
+  Building2,
+  ChartLine,
+  Code,
+  Cog,
+  FlaskConical,
+  Landmark,
+  Leaf,
+  Rocket,
+  School,
+} from "lucide-react";
+import { ButtonLink, CtaBand, Eyebrow, SectionTitle, WaterLevel } from "./components/ui";
+import { MissionsMarquee } from "./components/missions-marquee";
+import {
+  atouts,
+  audiences,
+  keyFigures,
+  methode,
+  missionsEcole,
+  site,
+} from "./data/site";
+import { countByFiliere, filieres, poleCount, poles, prestationsCount } from "./data/prestations";
 
-export default function App() {
-  const [menuOpen, setMenuOpen] = useState(false);
-  const [contactOpen, setContactOpen] = useState(false);
-  const [legalOpen, setLegalOpen] = useState(false);
-  const [privacyOpen, setPrivacyOpen] = useState(false);
-  const [scrolled, setScrolled] = useState(false);
-  const [expanded, setExpanded] = useState<Record<string,boolean>>({});
+export const metadata: Metadata = {
+  alternates: { canonical: "/" },
+};
 
-  useEffect(() => {
-    const onScroll = () => setScrolled(window.scrollY > 40);
-    window.addEventListener('scroll', onScroll);
-    return () => window.removeEventListener('scroll', onScroll);
-  }, []);
+const poleIcons = {
+  ingenierie: Cog,
+  digitalisation: Code,
+  environnement: Leaf,
+  strategie: ChartLine,
+} as const;
 
-  useEffect(() => {
-    const obs = new IntersectionObserver((entries) => {
-      entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('visible'); });
-    }, { threshold: 0.15 });
-    document.querySelectorAll('.reveal').forEach(el => obs.observe(el));
-    return () => obs.disconnect();
-  }, []);
+const audienceIcons = [Building2, Landmark, FlaskConical, Rocket];
 
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    const fd = new FormData(e.currentTarget);
-    const p = String(fd.get('prenom')||''), n = String(fd.get('nom')||'');
-    const em = String(fd.get('email')||''), msg = String(fd.get('message')||'');
-    const to = 'sealab.seatech@gmail.com';
-    const subject = `Demande de devis - ${p} ${n}`;
-    const body = `Nom: ${p} ${n}\nEmail: ${em}\n\n${msg}`;
-    window.location.href = `mailto:${encodeURIComponent(to)}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
-    setContactOpen(false);
-    e.currentTarget.reset();
-  };
-
-  const navLinks = [
-    { href: '#accueil', label: 'Accueil' },
-    { href: '#services', label: 'Services' },
-    { href: '#a-propos', label: 'À propos' },
-    { href: '#contact', label: 'Contact' },
-  ];
-
-  const services = [
-    { icon: <Code size={28}/>, title: 'Informatique & Numérique', desc: "Développement d'applications web et mobiles, création de sites vitrines, bases de données et solutions logicielles sur mesure.", extra: "Notre équipe maîtrise des technologies modernes telles que Next.js et Python. Nous concevons des outils internes optimisés pour vos projets.", id: 'e1' },
-    { icon: <Wrench size={28}/>, title: 'Mécanique & Matériaux', desc: "Modélisation CAO, études de résistance des matériaux, conception de pièces et systèmes mécaniques innovants.", extra: "Utilisation de logiciels professionnels (SolidWorks). Nous réalisons également de la simulation numérique (éléments finis) et du prototypage rapide via impression 3D.", id: 'e2' },
-    { icon: <Cpu size={28}/>, title: 'Systèmes Électroniques', desc: "Conception de circuits, systèmes embarqués.", extra: "Programmation de microcontrôleurs (Arduino, STM32), et intégration de capteurs pour créer des solutions connectées, intelligentes et autonomes.", id: 'e3' },
-  ];
+export default function Home() {
+  const maxFiliere = Math.max(...filieres.map((f) => countByFiliere(f.code)));
 
   return (
-    <div className="min-h-screen font-sans" style={{ background: '#020617' }}>
-
-      {/* ═══ NAV ═══ */}
-      <nav className={`glass-nav fixed top-0 w-full z-50 ${scrolled ? 'scrolled' : ''}`}>
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between items-center h-20">
-            <a href="#accueil" className="flex items-center gap-3">
-              <div className="w-12 h-12 rounded-xl overflow-hidden bg-white/10 p-1">
-                <img src="/favicon.ico" alt="Logo Sea'Lab" className="w-full h-full object-contain"/>
-              </div>
-              <div>
-                <span className="font-bold text-lg text-white block leading-none">Sea&apos;Lab</span>
-                <span className="text-xs font-medium text-sky-400 tracking-[0.2em] uppercase">Junior-Entreprise</span>
-              </div>
-            </a>
-            {/* Desktop links */}
-            <div className="hidden md:flex items-center gap-8">
-              {navLinks.map(l => <a key={l.href} href={l.href} className="nav-link">{l.label}</a>)}
-              <button onClick={() => setContactOpen(true)} className="btn-glow text-sm !py-2.5 !px-6">
-                <span>Devis gratuit</span><ArrowRight size={16}/>
-              </button>
-            </div>
-            {/* Mobile burger */}
-            <button className="md:hidden text-slate-300" onClick={() => setMenuOpen(!menuOpen)}>
-              {menuOpen ? <X size={24}/> : <Menu size={24}/>}
-            </button>
-          </div>
-        </div>
-        {/* Mobile menu */}
-        {menuOpen && (
-          <div className="md:hidden border-t border-white/5 px-4 pb-4 space-y-1">
-            {navLinks.map(l => (
-              <a key={l.href} href={l.href} onClick={() => setMenuOpen(false)}
-                className="block py-3 text-slate-300 hover:text-white transition-colors">{l.label}</a>
-            ))}
-            <button onClick={() => { setContactOpen(true); setMenuOpen(false); }}
-              className="btn-glow w-full mt-2 justify-center text-sm !py-2.5">
-              <span>Devis gratuit</span><ArrowRight size={16}/>
-            </button>
-          </div>
-        )}
-      </nav>
-
-      {/* ═══ HERO ═══ */}
-      <section id="accueil" className="relative min-h-screen flex items-center pt-20 overflow-hidden">
-        <div className="gradient-mesh"/>
-        {/* Particles */}
-        {[...Array(6)].map((_,i) => (
-          <div key={i} className="particle" style={{
-            width: 3+i*2, height: 3+i*2, left: `${10+i*15}%`,
-            bottom: '-10px', animationDuration: `${8+i*3}s`, animationDelay: `${i*1.5}s`
-          }}/>
-        ))}
-        {/* Hero image */}
-        <div className="absolute top-24 right-0 z-[1] pointer-events-none opacity-30 sm:opacity-40 lg:opacity-50">
-          <img src="/avionbat.png" alt="" className="w-64 sm:w-96 lg:w-[700px] object-contain"/>
-        </div>
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 py-20">
-          <div className="max-w-3xl">
-            <div className="inline-flex items-center gap-2.5 px-4 py-1.5 rounded-full bg-sky-500/10 text-sky-400 text-sm font-semibold mb-8 border border-sky-500/20">
-              <span className="relative flex h-2 w-2">
-                <span className="animate-ping-slow absolute inline-flex h-full w-full rounded-full bg-sky-400"/>
-                <span className="relative inline-flex rounded-full h-2 w-2 bg-sky-500"/>
-              </span>
-              Nouvelle Junior-Entreprise à Toulon
-            </div>
-            <h1 className="text-4xl sm:text-5xl lg:text-7xl font-extrabold tracking-tight leading-[1.1] mb-8">
-              <span className="text-white">Vos projets concrétisés par </span>
-              <span className="text-glow bg-gradient-to-r from-sky-400 to-cyan-300 bg-clip-text text-transparent">l&apos;ingénierie</span>
-              <span className="text-white"> des étudiants.</span>
-            </h1>
-            <p className="text-lg sm:text-xl text-slate-400 mb-10 leading-relaxed max-w-2xl">
-              Confiez vos études, développements et projets mécaniques aux futurs ingénieurs de l&apos;école SeaTech. Innovation, rigueur et dynamisme.
-            </p>
-            <div className="flex flex-col sm:flex-row gap-4">
-              <button onClick={() => setContactOpen(true)} className="btn-glow">
-                <span>Demander un devis</span><ArrowRight size={20}/>
-              </button>
-              <a href="#services" className="btn-outline">Nos services</a>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* ═══ SERVICES ═══ */}
-      <section id="services" className="py-24 relative" style={{ background: '#0a1228' }}>
-        <div className="gradient-line w-full mb-24"/>
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center max-w-2xl mx-auto mb-16 reveal">
-            <p className="text-sky-400 font-semibold text-sm tracking-widest uppercase mb-3">Expertise</p>
-            <h2 className="text-3xl sm:text-4xl font-bold text-white mb-4">Nos Domaines d&apos;Expertise</h2>
-            <p className="text-slate-400">Les étudiants de SeaTech mettent leurs compétences au service de vos projets techniques.</p>
-          </div>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 stagger">
-            {services.map(s => (
-              <div key={s.id} className="glass-card rounded-2xl p-8 group cursor-default reveal">
-                <div className="icon-box w-14 h-14 bg-sky-500/10 text-sky-400 rounded-xl flex items-center justify-center mb-6">
-                  {s.icon}
-                </div>
-                <h3 className="text-xl font-bold text-white mb-3">{s.title}</h3>
-                <p className="text-slate-400 text-sm leading-relaxed">{s.desc}</p>
-                {/* Desktop expand on hover */}
-                <div className="hidden sm:grid grid-rows-[0fr] group-hover:grid-rows-[1fr] transition-[grid-template-rows] duration-500">
-                  <div className="overflow-hidden">
-                    <p className="pt-4 text-slate-500 text-sm border-t border-white/5 mt-4">{s.extra}</p>
-                  </div>
-                </div>
-                {/* Mobile expand on tap */}
-                <div className={`grid sm:hidden ${expanded[s.id] ? 'grid-rows-[1fr]' : 'grid-rows-[0fr]'} transition-[grid-template-rows] duration-500`}>
-                  <div className="overflow-hidden">
-                    <p className="pt-4 text-slate-500 text-sm border-t border-white/5 mt-4">{s.extra}</p>
-                  </div>
-                </div>
-                <div className="mt-3 sm:hidden">
-                  <button onClick={() => setExpanded(p => ({...p,[s.id]:!p[s.id]}))} className="text-sm font-medium text-sky-400">
-                    {expanded[s.id] ? 'Voir moins' : 'Voir plus'}
-                  </button>
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* ═══ À PROPOS ═══ */}
-      <section id="a-propos" className="py-24" style={{ background: '#020617' }}>
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex flex-col lg:flex-row items-center gap-16">
-            <div className="lg:w-1/2 w-full reveal">
-              <div className="aspect-square md:aspect-video lg:aspect-square rounded-2xl overflow-hidden border border-white/5 relative">
-                <img src="/equipe.jpg" alt="Équipe Sea'Lab" className="w-full h-full object-cover"/>
-                <div className="absolute inset-0 bg-gradient-to-t from-[#020617]/60 to-transparent"/>
-              </div>
-            </div>
-            <div className="lg:w-1/2 reveal">
-              <p className="text-sky-400 font-semibold text-sm tracking-widest uppercase mb-3">À propos</p>
-              <h2 className="text-3xl sm:text-4xl font-bold text-white mb-6">La force d&apos;une école d&apos;ingénieurs d&apos;excellence.</h2>
-              <p className="text-lg text-slate-400 mb-8 leading-relaxed">
-                En tant que Junior-Entreprise de <strong className="text-white">SeaTech</strong> à Toulon, nous fonctionnons comme un cabinet de conseil étudiant. Nous permettons à nos intervenants, futurs ingénieurs, de mettre en pratique leurs connaissances théoriques sur des projets concrets.
+    <>
+      {/* ═══ Hero : la ligne de flottaison ═══ */}
+      <section className="relative overflow-hidden" aria-label="Présentation">
+        <div className="relative bg-ice pt-28 sm:pt-36">
+          <div className="isobaths drift text-navy/[0.07]" aria-hidden />
+          <div className="wrap relative flex flex-wrap items-end justify-between gap-x-10 gap-y-6 pb-4 sm:pb-6">
+            <div>
+              <Eyebrow>Junior-Entreprise · SeaTech Toulon</Eyebrow>
+              <p className="mt-5 max-w-xl font-display text-2xl leading-snug font-medium text-balance text-navy sm:text-3xl">
+                Ingénierie &amp; innovation au service de la mer.
               </p>
-              <ul className="space-y-4">
-                {[
-                  ['Qualité garantie :', 'Des processus contrôlés et encadrés.'],
-                  ['Tarifs compétitifs :', 'Un modèle associatif avantageux.'],
-                  ['Innovation :', 'Les technologies et méthodes les plus récentes.'],
-                ].map(([t,d],i) => (
-                  <li key={i} className="flex items-start gap-3">
-                    <div className="mt-1 w-6 h-6 rounded-full bg-sky-500/15 text-sky-400 flex items-center justify-center shrink-0 text-xs font-bold">✓</div>
-                    <span className="text-slate-300"><strong className="text-white">{t}</strong> {d}</span>
-                  </li>
-                ))}
-              </ul>
+            </div>
+            <div className="eyebrow hidden text-right leading-relaxed text-slate sm:block">
+              {site.coordinates}
+              <br />
+              <span className="text-sea">{site.campus}</span>
             </div>
           </div>
         </div>
-      </section>
 
-      {/* ═══ CTA ═══ */}
-      <section id="contact" className="relative py-24 overflow-hidden" style={{ background: 'linear-gradient(135deg, #0c4a6e 0%, #0369a1 50%, #0284c7 100%)' }}>
-        <div className="absolute inset-0 opacity-[0.07]" style={{ backgroundImage: 'radial-gradient(circle at 2px 2px, white 1px, transparent 0)', backgroundSize: '24px 24px' }}/>
-        <div className="max-w-4xl mx-auto px-4 relative z-10 text-center reveal">
-          <h2 className="text-3xl md:text-4xl font-bold text-white mb-6">Un projet à nous confier ?</h2>
-          <p className="text-sky-100/80 text-lg mb-10 max-w-2xl mx-auto">
-            Discutons de vos besoins. Notre équipe est réactive et prête à transformer vos idées en réalisations concrètes.
-          </p>
-          <button onClick={() => setContactOpen(true)}
-            className="bg-white text-sky-700 px-8 py-4 rounded-full font-bold hover:bg-sky-50 transition-all shadow-lg hover:shadow-xl hover:-translate-y-1 cursor-pointer">
-            Demander un premier rendez-vous
-          </button>
+        <div
+          className="relative -mt-px"
+          style={{ background: "linear-gradient(to bottom, var(--color-ice) 50%, var(--color-navy) 50%)" }}
+        >
+          <div className="pointer-events-none absolute inset-x-0 top-1/2 h-2.5 -translate-y-1/2 overflow-hidden" aria-hidden>
+            <svg className="swell h-2.5 w-[200%] text-cyan" viewBox="0 0 200 6" preserveAspectRatio="none">
+              <path
+                d="M0 3 Q 2.5 0.5 5 3 T 10 3 T 15 3 T 20 3 T 25 3 T 30 3 T 35 3 T 40 3 T 45 3 T 50 3 T 55 3 T 60 3 T 65 3 T 70 3 T 75 3 T 80 3 T 85 3 T 90 3 T 95 3 T 100 3 T 105 3 T 110 3 T 115 3 T 120 3 T 125 3 T 130 3 T 135 3 T 140 3 T 145 3 T 150 3 T 155 3 T 160 3 T 165 3 T 170 3 T 175 3 T 180 3 T 185 3 T 190 3 T 195 3 T 200 3"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="1.5"
+                vectorEffect="non-scaling-stroke"
+              />
+            </svg>
+          </div>
+          <div className="wrap relative">
+            <h1 className="wordmark relative -ml-[0.04em]">
+              <span className="sr-only">Sea&apos;Lab, la Junior-Entreprise de SeaTech Toulon</span>
+              <span aria-hidden className="above-water block text-navy">
+                Sea’Lab
+              </span>
+              <span aria-hidden className="below-water absolute inset-0 block text-cyan">
+                Sea’Lab
+              </span>
+            </h1>
+            <WaterLevel className="absolute top-1/2 right-6 hidden size-9 -translate-y-[115%] text-navy sm:block lg:right-10" />
+          </div>
         </div>
-      </section>
 
-      {/* ═══ FOOTER ═══ */}
-      <footer className="py-12 border-t border-white/5" style={{ background: '#020617' }}>
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-8 mb-8">
-            <div className="col-span-1 md:col-span-2">
-              <div className="flex items-center gap-3 mb-4">
-                <div className="w-12 h-12 rounded-xl overflow-hidden bg-white/10 p-1">
-                  <img src="/favicon.ico" alt="Logo" className="w-full h-full object-contain"/>
+        <div className="relative -mt-px bg-navy pb-16 text-white sm:pb-20">
+          <div className="isobaths isobaths-alt text-cyan/[0.09]" aria-hidden />
+          <div className="wrap relative">
+            <div className="grid gap-10 pt-8 sm:pt-12 lg:grid-cols-12 lg:items-end">
+              <p className="text-lg leading-relaxed text-pretty text-white/85 sm:text-2xl sm:leading-relaxed lg:col-span-7">
+                Les élèves-ingénieurs de <strong className="font-semibold text-white">SeaTech</strong>, école
+                d&apos;ingénieurs de l&apos;Université de Toulon, réalisent vos études en ingénierie,
+                digitalisation, environnement et stratégie, en s&apos;appuyant sur les laboratoires et plateformes
+                de l&apos;école.
+              </p>
+              <div className="flex flex-wrap gap-3 lg:col-span-5 lg:justify-end">
+                <ButtonLink href="/prestations" variant="light">
+                  Découvrir nos prestations
+                </ButtonLink>
+                <ButtonLink href="/contact" variant="ghost-dark">
+                  Parler de votre projet
+                </ButtonLink>
+              </div>
+            </div>
+
+            <dl className="mt-16 grid grid-cols-2 gap-px border-y border-white/15 bg-white/15 sm:mt-20 lg:grid-cols-4">
+              {keyFigures.map((fig) => (
+                <div key={fig.label} className="flex flex-col bg-navy px-4 py-6 sm:py-8 lg:px-8">
+                  <dt className="eyebrow order-2 mt-2 text-[0.68rem] leading-relaxed text-mist">{fig.label}</dt>
+                  <dd className="font-display text-5xl font-semibold tracking-tight text-white sm:text-6xl">
+                    {fig.value}
+                  </dd>
                 </div>
-                <span className="font-bold text-xl text-white">Sea&apos;Lab</span>
+              ))}
+            </dl>
+          </div>
+        </div>
+      </section>
+
+      {/* ═══ 01 · Qui sommes-nous ═══ */}
+      <section className="bg-foam py-24 sm:py-32">
+        <div className="wrap grid items-center gap-14 lg:grid-cols-12">
+          <div className="lg:col-span-6">
+            <SectionTitle
+              index="01"
+              eyebrow="Qui sommes-nous"
+              title="La Junior-Entreprise de SeaTech, au service de vos projets."
+            />
+            <div className="reveal mt-6 space-y-4 text-lg leading-relaxed text-slate">
+              <p>
+                Association pédagogique à but non lucratif régie par la loi 1901, Sea&apos;Lab permet aux élèves de
+                SeaTech de mettre en pratique leurs enseignements en réalisant des{" "}
+                <strong className="font-semibold text-navy">missions rétribuées</strong> pour des entreprises, des
+                collectivités et des laboratoires.
+              </p>
+              <p>
+                Nos prestations couvrent les <strong className="font-semibold text-navy">six filières</strong> de
+                l&apos;école : ingénierie marine, mécanique, génie logiciel, matériaux, modélisation &amp; simulation,
+                mécatronique &amp; robotique.
+              </p>
+            </div>
+            <ul className="reveal mt-8 flex flex-wrap gap-2">
+              {["Association loi 1901", "Junior-Création CNJE", "Seule Junior-Entreprise de SeaTech"].map((b) => (
+                <li
+                  key={b}
+                  className="rounded-full border border-navy/15 bg-white px-4 py-2 text-sm font-medium text-navy"
+                >
+                  {b}
+                </li>
+              ))}
+            </ul>
+            <Link
+              href="/association"
+              className="reveal mt-10 inline-flex items-center gap-2 font-semibold text-sea hover:text-navy"
+            >
+              Découvrir l&apos;association, son histoire et son équipe
+              <ArrowRight className="size-4" aria-hidden />
+            </Link>
+          </div>
+
+          <figure className="reveal relative lg:col-span-6">
+            <div className="absolute -inset-3 rounded-[2rem] border border-dashed border-cyan/50" aria-hidden />
+            <Image
+              src="/images/equipe-sealab.jpg"
+              alt="Les membres de Sea'Lab réunis dans un atelier de SeaTech"
+              width={1600}
+              height={1200}
+              sizes="(min-width: 1024px) 40vw, 100vw"
+              className="relative aspect-[4/3] w-full rounded-[1.6rem] object-cover"
+            />
+            <figcaption className="absolute bottom-4 left-4 rounded-full bg-navy/85 px-4 py-2 font-mono text-[0.7rem] tracking-wider text-white uppercase backdrop-blur">
+              L&apos;équipe Sea&apos;Lab · SeaTech, Toulon
+            </figcaption>
+          </figure>
+        </div>
+      </section>
+
+      {/* ═══ 02 · Pôles ═══ */}
+      <section className="relative bg-white py-24 sm:py-32">
+        <div className="wrap">
+          <div className="flex flex-wrap items-end justify-between gap-8">
+            <SectionTitle
+              index="02"
+              eyebrow="Nos prestations"
+              title="Quatre pôles d'expertise, adossés aux compétences de SeaTech."
+              lead={`${prestationsCount} prestations détaillées, une liste non exhaustive : chaque mission est construite autour de votre besoin.`}
+            />
+            <ButtonLink href="/prestations" variant="secondary" className="reveal">
+              Toutes les prestations
+            </ButtonLink>
+          </div>
+
+          <div className="mt-14 grid gap-5 md:grid-cols-2">
+            {poles.map((pole) => {
+              const Icon = poleIcons[pole.id as keyof typeof poleIcons];
+              return (
+                <Link
+                  key={pole.id}
+                  href={`/prestations#${pole.id}`}
+                  className="reveal group relative flex flex-col overflow-hidden rounded-3xl border border-line bg-foam p-7 transition duration-300 hover:-translate-y-1 hover:border-navy hover:bg-navy sm:p-9"
+                >
+                  <div className="isobaths text-cyan/0 transition-colors duration-500 group-hover:text-cyan/10" aria-hidden />
+                  <div className="relative flex items-start justify-between">
+                    <span className="grid size-14 place-items-center rounded-2xl bg-white text-sea ring-1 ring-line transition group-hover:bg-white/10 group-hover:text-cyan-light group-hover:ring-white/15">
+                      <Icon className="size-6" aria-hidden />
+                    </span>
+                    <span className="font-mono text-sm text-slate group-hover:text-white/70" aria-hidden>
+                      0{pole.number}
+                    </span>
+                  </div>
+                  <h3 className="relative mt-8 font-display text-3xl font-semibold tracking-tight text-navy group-hover:text-white">
+                    {pole.title}
+                  </h3>
+                  <p className="relative mt-3 text-slate group-hover:text-mist">{pole.short}</p>
+                  <ul className="relative mt-6 space-y-2">
+                    {pole.highlights.map((h) => (
+                      <li key={h} className="flex items-center gap-3 text-navy group-hover:text-white">
+                        <span className="h-px w-4 bg-cyan" aria-hidden />
+                        {h}
+                      </li>
+                    ))}
+                  </ul>
+                  <div className="relative mt-auto flex items-center justify-between pt-10">
+                    <span className="eyebrow text-sea group-hover:text-cyan-light">
+                      {poleCount(pole)} prestations
+                    </span>
+                    <span className="grid size-10 place-items-center rounded-full bg-navy text-white transition group-hover:bg-cyan group-hover:text-abyss">
+                      <ArrowUpRight className="size-5" aria-hidden />
+                    </span>
+                  </div>
+                </Link>
+              );
+            })}
+          </div>
+        </div>
+      </section>
+
+      {/* ═══ Exemples de missions ═══ */}
+      <MissionsMarquee />
+
+      {/* ═══ 03 · Méthode ═══ */}
+      <section className="relative overflow-hidden bg-navy py-24 text-white sm:py-32">
+        <div className="isobaths text-cyan/[0.07]" aria-hidden />
+        <div className="wrap relative">
+          <SectionTitle
+            tone="dark"
+            index="03"
+            eyebrow="Notre méthode"
+            title="Une étude menée comme un vrai projet d'ingénieur."
+            lead="De la première prise de contact à la livraison, chaque étape est cadrée et suivie par un responsable dédié."
+          />
+          <ol className="relative mt-16 grid gap-10 lg:grid-cols-5 lg:gap-6">
+            <span
+              className="absolute top-6 right-[10%] left-[10%] hidden border-t border-dashed border-cyan/40 lg:block"
+              aria-hidden
+            />
+            <span
+              className="absolute top-2 bottom-2 left-6 border-l border-dashed border-cyan/40 lg:hidden"
+              aria-hidden
+            />
+            {methode.map((step, i) => (
+              <li key={step.title} className="reveal relative flex gap-6 lg:flex-col lg:items-center lg:text-center">
+                <span className="relative grid size-12 shrink-0 place-items-center rounded-full border border-cyan/50 bg-navy font-mono text-sm text-cyan-light">
+                  {String(i + 1).padStart(2, "0")}
+                </span>
+                <div>
+                  <h3 className="font-display text-xl font-semibold">{step.title}</h3>
+                  <p className="mt-2 text-mist">{step.text}</p>
+                </div>
+              </li>
+            ))}
+          </ol>
+        </div>
+      </section>
+
+      {/* ═══ 04 · Pour qui ═══ */}
+      <section className="bg-foam py-24 sm:py-32">
+        <div className="wrap">
+          <SectionTitle
+            index="04"
+            eyebrow="Pour qui ?"
+            title="Des missions pour les professionnels du territoire et d'ailleurs."
+            lead="Un besoin ponctuel ou une brique d'un projet plus global : nous adaptons chaque mission à votre structure."
+          />
+          <div className="mt-14 grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
+            {audiences.map((a, i) => {
+              const Icon = audienceIcons[i];
+              return (
+                <div key={a.title} className="reveal rounded-3xl border border-line bg-white p-7">
+                  <Icon className="size-7 text-sea" aria-hidden />
+                  <h3 className="mt-6 font-display text-xl font-semibold text-navy">{a.title}</h3>
+                  <p className="mt-2 text-slate">{a.text}</p>
+                </div>
+              );
+            })}
+          </div>
+
+          <div className="reveal mt-5 grid overflow-hidden rounded-3xl bg-ice lg:grid-cols-12">
+            <div className="p-8 sm:p-10 lg:col-span-5">
+              <School className="size-7 text-sea" aria-hidden />
+              <h3 className="mt-6 font-display text-2xl font-semibold text-navy">
+                École et Université : confiez-nous vos petits projets
+              </h3>
+              <p className="mt-3 text-slate">
+                Un cadre professionnel (convention d&apos;étude, intervenants sélectionnés, suivi par un responsable
+                dédié, tarif JEH encadré par la CNJE) pour les besoins des laboratoires et des services de SeaTech et
+                de l&apos;Université de Toulon.
+              </p>
+              <Link
+                href="/contact"
+                className="mt-6 inline-flex items-center gap-2 font-semibold text-sea hover:text-navy"
+              >
+                Proposer une mission <ArrowRight className="size-4" aria-hidden />
+              </Link>
+            </div>
+            <ul className="grid gap-px bg-line/70 sm:grid-cols-2 lg:col-span-7">
+              {missionsEcole.map((m) => (
+                <li key={m.title} className="bg-white/70 p-7">
+                  <p className="font-semibold text-navy">{m.title}</p>
+                  <p className="mt-2 text-sm leading-relaxed text-slate">{m.text}</p>
+                </li>
+              ))}
+            </ul>
+          </div>
+        </div>
+      </section>
+
+      {/* ═══ 05 · Atouts & filières ═══ */}
+      <section className="bg-white py-24 sm:py-32">
+        <div className="wrap">
+          <SectionTitle
+            index="05"
+            eyebrow="Nos atouts"
+            title="Pourquoi choisir Sea'Lab ?"
+          />
+          <div className="mt-14 grid gap-x-12 gap-y-12 md:grid-cols-2">
+            {atouts.map((a, i) => (
+              <div key={a.title} className="reveal flex gap-6">
+                <span
+                  className="w-16 shrink-0 font-display text-5xl leading-none font-semibold text-cyan/40"
+                  aria-hidden
+                >
+                  0{i + 1}
+                </span>
+                <div>
+                  <h3 className="font-display text-2xl font-semibold text-navy">{a.title}</h3>
+                  <p className="mt-3 leading-relaxed text-slate">{a.text}</p>
+                </div>
               </div>
-              <p className="text-slate-500 max-w-sm">La Junior-Entreprise de l&apos;école d&apos;ingénieurs SeaTech, au service des professionnels et particuliers.</p>
-            </div>
-            <div>
-              <h4 className="text-white font-semibold mb-4">Contacts</h4>
-              <ul className="space-y-3">
-                <li className="flex items-center gap-2 text-sm text-slate-400"><MapPin size={16} className="text-sky-500"/>Campus de La Garde, Toulon</li>
-                <li className="flex items-center gap-2 text-sm text-slate-400"><Mail size={16} className="text-sky-500"/>sealab.seatech@gmail.com</li>
-                <li className="flex items-center gap-2 text-sm text-slate-400"><Phone size={16} className="text-sky-500"/>+33 (0)7 68 74 31 93</li>
-              </ul>
-            </div>
-            <div>
-              <h4 className="text-white font-semibold mb-4">Liens Utiles</h4>
-              <ul className="space-y-2">
-                <li><button onClick={() => setLegalOpen(true)} className="text-sm text-slate-400 hover:text-white transition-colors">Mentions légales</button></li>
-                <li><button onClick={() => setPrivacyOpen(true)} className="text-sm text-slate-400 hover:text-white transition-colors">Politique de confidentialité</button></li>
-                <li><a href="https://www.seatech.fr/" target="_blank" rel="noreferrer" className="text-sm text-slate-400 hover:text-white transition-colors">École SeaTech</a></li>
-              </ul>
-            </div>
+            ))}
           </div>
-          <div className="gradient-line mb-8"/>
-          <p className="text-sm text-slate-600 text-center">© {new Date().getFullYear()} Sea&apos;Lab Junior-Entreprise. Tous droits réservés.</p>
-        </div>
-      </footer>
 
-      {/* ═══ CONTACT MODAL ═══ */}
-      {contactOpen && (
-        <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
-          <div className="modal-overlay absolute inset-0" onClick={() => setContactOpen(false)}/>
-          <div className="modal-glass relative rounded-2xl w-full max-w-lg overflow-hidden">
-            <div className="flex justify-between items-center p-6 border-b border-white/5">
-              <h3 className="text-2xl font-bold text-white">Contactez-nous</h3>
-              <button onClick={() => setContactOpen(false)} className="text-slate-400 hover:text-white bg-white/5 hover:bg-white/10 p-2 rounded-full transition-colors"><X size={20}/></button>
-            </div>
-            <form onSubmit={handleSubmit} className="p-6 space-y-4">
-              <div className="grid grid-cols-2 gap-4">
-                <div><label className="text-sm font-medium text-slate-300 mb-1.5 block">Prénom</label><input name="prenom" required className="form-input" placeholder="Jean"/></div>
-                <div><label className="text-sm font-medium text-slate-300 mb-1.5 block">Nom</label><input name="nom" required className="form-input" placeholder="Dupont"/></div>
+          <div className="mt-24 rounded-[2rem] bg-navy p-8 text-white sm:p-12">
+            <div className="flex flex-wrap items-end justify-between gap-6">
+              <div className="max-w-xl">
+                <Eyebrow tone="dark">Six filières, une seule équipe</Eyebrow>
+                <h3 className="mt-4 font-display text-3xl font-semibold tracking-tight sm:text-4xl">
+                  Les majors de SeaTech mobilisables sur vos missions
+                </h3>
               </div>
-              <div><label className="text-sm font-medium text-slate-300 mb-1.5 block">Adresse e-mail</label><input name="email" type="email" required className="form-input" placeholder="jean.dupont@exemple.fr"/></div>
-              <div><label className="text-sm font-medium text-slate-300 mb-1.5 block">Votre message</label><textarea name="message" required rows={4} className="form-input resize-none" placeholder="Décrivez-nous votre projet ou votre besoin..."/></div>
-              <button type="submit" className="btn-glow w-full justify-center mt-2"><Send size={18}/><span>Envoyer le message</span></button>
-            </form>
+              <p className="max-w-xs text-sm text-mist">
+                Nombre de prestations de notre catalogue auxquelles chaque filière contribue.
+              </p>
+            </div>
+            <ul className="mt-10 grid gap-px overflow-hidden rounded-2xl bg-white/10 sm:grid-cols-2 lg:grid-cols-3">
+              {filieres.map((f) => {
+                const n = countByFiliere(f.code);
+                return (
+                  <li key={f.code} className="bg-navy p-6 transition-colors hover:bg-navy-2">
+                    <div className="flex items-baseline justify-between">
+                      <span className="font-display text-3xl font-semibold">{f.code}</span>
+                      <span className="font-mono text-sm text-cyan-light">{n} prest.</span>
+                    </div>
+                    <p className="mt-1 text-mist">{f.domaine}</p>
+                    <div className="mt-5 h-1 rounded-full bg-white/10">
+                      <div className="h-1 rounded-full bg-cyan" style={{ width: `${(n / maxFiliere) * 100}%` }} />
+                    </div>
+                  </li>
+                );
+              })}
+            </ul>
           </div>
         </div>
-      )}
+      </section>
 
-      {/* ═══ LEGAL MODAL ═══ */}
-      {legalOpen && (
-        <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
-          <div className="modal-overlay absolute inset-0" onClick={() => setLegalOpen(false)}/>
-          <div className="modal-glass relative rounded-2xl w-full max-w-3xl overflow-hidden max-h-[90vh] flex flex-col">
-            <div className="flex justify-between items-center p-6 border-b border-white/5 shrink-0">
-              <h3 className="text-2xl font-bold text-white">Mentions Légales</h3>
-              <button onClick={() => setLegalOpen(false)} className="text-slate-400 hover:text-white bg-white/5 hover:bg-white/10 p-2 rounded-full transition-colors"><X size={20}/></button>
-            </div>
-            <div className="p-6 overflow-y-auto text-slate-400 space-y-4">
-              <h4 className="font-bold text-white">1. Éditeur du site</h4>
-              <p>Le présent site est édité par SeaLab Junior-Entreprise.</p>
-              <p><strong className="text-white">Siège social :</strong> Campus de La Garde, Avenue de l&apos;Université, 83130 La Garde, France.</p>
-              <p><strong className="text-white">Email :</strong> sealab.seatech@gmail.com</p>
-              <p><strong className="text-white">Téléphone :</strong> +33 (0)7 68 74 31 93</p>
-              <h4 className="font-bold text-white mt-6">2. Directeur de la publication</h4>
-              <p>Le directeur de la publication est le Président en exercice de SeaLab Junior-Entreprise.</p>
-              <h4 className="font-bold text-white mt-6">3. Hébergement</h4>
-              <p>Ce site est hébergé par Vercel.</p>
-              <h4 className="font-bold text-white mt-6">4. Propriété intellectuelle</h4>
-              <p>L&apos;ensemble de ce site relève de la législation française et internationale sur le droit d&apos;auteur et la propriété intellectuelle. Tous les droits de reproduction sont réservés.</p>
-            </div>
+      {/* ═══ Campus ═══ */}
+      <section className="relative isolate overflow-hidden">
+        <Image
+          src="/images/campus-seatech.jpg"
+          alt="Le bâtiment de SeaTech sur le campus de La Garde"
+          fill
+          sizes="100vw"
+          className="-z-10 object-cover"
+        />
+        <div className="absolute inset-0 -z-10 bg-gradient-to-r from-abyss/95 via-abyss/75 to-abyss/10" aria-hidden />
+        <div className="wrap py-28 text-white sm:py-40">
+          <div className="reveal max-w-xl">
+            <Eyebrow tone="dark">{site.coordinates}</Eyebrow>
+            <h2 className="mt-6 font-display text-4xl leading-[1.05] font-semibold tracking-tight sm:text-5xl">
+              Au cœur du bassin maritime toulonnais.
+            </h2>
+            <p className="mt-6 text-lg leading-relaxed text-white/80">
+              Sea&apos;Lab est hébergée par SeaTech sur le campus de La Garde de l&apos;Université de Toulon. Nos
+              missions s&apos;appuient sur les laboratoires et plateformes techniques mis à disposition par
+              l&apos;école, et sur la proximité de ses enseignants-chercheurs.
+            </p>
           </div>
         </div>
-      )}
+      </section>
 
-      {/* ═══ PRIVACY MODAL ═══ */}
-      {privacyOpen && (
-        <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
-          <div className="modal-overlay absolute inset-0" onClick={() => setPrivacyOpen(false)}/>
-          <div className="modal-glass relative rounded-2xl w-full max-w-3xl overflow-hidden max-h-[90vh] flex flex-col">
-            <div className="flex justify-between items-center p-6 border-b border-white/5 shrink-0">
-              <h3 className="text-2xl font-bold text-white">Politique de Confidentialité</h3>
-              <button onClick={() => setPrivacyOpen(false)} className="text-slate-400 hover:text-white bg-white/5 hover:bg-white/10 p-2 rounded-full transition-colors"><X size={20}/></button>
-            </div>
-            <div className="p-6 overflow-y-auto text-slate-400 space-y-4">
-              <h4 className="font-bold text-white">1. Collecte des données</h4>
-              <p>Nous collectons les informations suivantes lors de l&apos;utilisation de notre formulaire de contact : nom, prénom, adresse e-mail et contenu du message.</p>
-              <h4 className="font-bold text-white mt-6">2. Utilisation des données</h4>
-              <p>Les informations recueillies sont utilisées uniquement pour :</p>
-              <ul className="list-disc pl-5 space-y-1"><li>Répondre à vos demandes de devis ou d&apos;information.</li><li>Vous recontacter dans le cadre de la gestion de votre projet.</li></ul>
-              <h4 className="font-bold text-white mt-6">3. Protection des données</h4>
-              <p>Vos données ne sont ni vendues, ni échangées, ni transférées à des tiers sans votre consentement.</p>
-              <h4 className="font-bold text-white mt-6">4. Vos droits (RGPD)</h4>
-              <p>Conformément au RGPD, vous disposez d&apos;un droit d&apos;accès, de rectification, de suppression et d&apos;opposition aux données personnelles vous concernant. Contact : sealab.seatech@gmail.com.</p>
-            </div>
+      {/* ═══ Réseau ═══ */}
+      <section className="bg-foam py-20">
+        <div className="wrap grid items-center gap-10 lg:grid-cols-12">
+          <div className="lg:col-span-4">
+            <Eyebrow>Notre réseau</Eyebrow>
+            <p className="mt-4 font-display text-2xl font-semibold text-navy">
+              Soutenus par SeaTech et l&apos;Université de Toulon, membres de la CNJE.
+            </p>
           </div>
+          <ul className="grid grid-cols-1 gap-4 sm:grid-cols-3 lg:col-span-8">
+            {[
+              { src: "/brand/seatech.png", alt: "SeaTech Toulon", w: 721, h: 160, label: "École d'ingénieurs" },
+              {
+                src: "/brand/universite-toulon.png",
+                alt: "Université de Toulon",
+                w: 670,
+                h: 160,
+                label: "Université",
+              },
+              {
+                src: "/brand/junior-entreprises.png",
+                alt: "Confédération Nationale des Junior-Entreprises",
+                w: 265,
+                h: 220,
+                label: "Mouvement CNJE",
+              },
+            ].map((p) => (
+              <li key={p.alt} className="flex flex-col items-center gap-4 rounded-2xl border border-line bg-white p-6">
+                <div className="flex h-14 items-center">
+                  <Image src={p.src} alt={p.alt} width={p.w} height={p.h} className="max-h-14 w-auto" />
+                </div>
+                <span className="eyebrow text-[0.65rem] text-slate">{p.label}</span>
+              </li>
+            ))}
+          </ul>
         </div>
-      )}
-    </div>
+      </section>
+
+      <CtaBand />
+    </>
   );
 }
