@@ -31,7 +31,7 @@ export const metadata: Metadata = {
     template: "%s · Sea'Lab",
   },
   description:
-    "Sea'Lab, la Junior-Entreprise de SeaTech (Université de Toulon) : ingénierie, digitalisation, environnement et conseil réalisés par les élèves-ingénieurs de six filières. Ingénierie & innovation au service de la mer.",
+    "Sea'Lab, la Junior-Entreprise de SeaTech (Université de Toulon) : ingénierie, digitalisation, environnement et conseil réalisés par les élèves-ingénieurs de toutes les filières de l'école, alternants compris. Ingénierie & innovation au service de la mer.",
   keywords: [
     "Junior-Entreprise",
     "SeaTech",

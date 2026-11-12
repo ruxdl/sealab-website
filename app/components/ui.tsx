@@ -152,11 +152,11 @@ export function CtaBand() {
             Ensemble, accompagnons vos projets <span className="text-cyan-light">au rythme des vagues.</span>
           </h2>
           <p className="mt-6 max-w-xl text-lg text-mist">
-            Décrivez-nous votre besoin : nous revenons vers vous avec une proposition personnalisée.
+            Décrivez-nous votre besoin : nous vous adressons un devis gratuit et sans engagement sous 9 jours.
           </p>
           <div className="mt-10 flex flex-wrap gap-3">
             <ButtonLink href="/contact" variant="light">
-              Nous contacter
+              Demander un devis
             </ButtonLink>
             <ButtonLink href="/prestations" variant="ghost-dark">
               Voir les prestations

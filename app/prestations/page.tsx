@@ -47,7 +47,7 @@ export default function PrestationsPage() {
         title={
           <>
             Quatre pôles, {prestationsCount} prestations,{" "}
-            <span className="text-sea">six filières d&apos;ingénieurs.</span>
+            <span className="text-sea">toutes les filières d&apos;ingénieurs.</span>
           </>
         }
         lead="De la simulation d'un écoulement au bilan carbone, du site web à l'étude de marché : nos prestations couvrent les domaines de formation de SeaTech et s'appuient sur les laboratoires de l'école."
@@ -95,7 +95,7 @@ export default function PrestationsPage() {
             className="lg:col-span-5"
             eyebrow="Légende"
             title="Les filières derrière chaque prestation"
-            lead="Les étiquettes indiquent les filières de SeaTech mobilisées sur chaque prestation. Une même mission peut croiser plusieurs filières."
+            lead="Les étiquettes indiquent les principales filières de SeaTech mobilisées sur chaque prestation. Liste non exhaustive : toutes les formations de l'école, alternance comprise, peuvent contribuer, et une même mission peut croiser plusieurs filières."
           />
           <dl className="grid gap-px self-start overflow-hidden rounded-3xl bg-line sm:grid-cols-2 lg:col-span-7">
             {filieres.map((f) => (

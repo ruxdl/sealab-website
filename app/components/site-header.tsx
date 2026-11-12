@@ -88,7 +88,7 @@ export function SiteHeader() {
             href="/contact"
             className="ml-3 hidden items-center gap-2 rounded-full bg-navy px-5 py-2.5 text-[0.94rem] font-semibold whitespace-nowrap text-white transition hover:bg-navy-2 lg:inline-flex"
           >
-            Parler de votre projet
+            Demander un devis
             <ArrowRight className="size-4" aria-hidden />
           </Link>
         </nav>

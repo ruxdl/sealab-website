@@ -143,9 +143,15 @@ export default function Home() {
                 collectivités et des laboratoires.
               </p>
               <p>
-                Nos prestations couvrent les <strong className="font-semibold text-navy">six filières</strong> de
-                l&apos;école : ingénierie marine, mécanique, génie logiciel, matériaux, modélisation &amp; simulation,
-                mécatronique &amp; robotique.
+                Nos prestations s&apos;appuient sur{" "}
+                <strong className="font-semibold text-navy">
+                  l&apos;ensemble des formations de SeaTech, sous statut étudiant comme en alternance
+                </strong>{" "}
+                : ingénierie marine, mécanique, génie logiciel, systèmes numériques, matériaux, modélisation &amp;
+                simulation, mécatronique &amp; robotique…
+              </p>
+              <p>
+                Les élèves alternants peuvent aussi intervenir et apportent leur expérience de l&apos;entreprise.
               </p>
             </div>
             <ul className="reveal mt-8 flex flex-wrap gap-2">
@@ -153,7 +159,7 @@ export default function Home() {
                 "Association loi 1901",
                 "Junior-Création CNJE",
                 "Seule Junior-Entreprise de SeaTech",
-                "Les 6 filières représentées au bureau",
+                "Toutes les filières représentées au bureau",
               ].map((b) => (
                 <li
                   key={b}
@@ -367,13 +373,14 @@ export default function Home() {
           <div className="mt-24 rounded-[2rem] bg-navy p-8 text-white sm:p-12">
             <div className="flex flex-wrap items-end justify-between gap-6">
               <div className="max-w-xl">
-                <Eyebrow tone="dark">Six filières, une seule équipe</Eyebrow>
+                <Eyebrow tone="dark">Toutes les filières, une seule équipe</Eyebrow>
                 <h3 className="mt-4 font-display text-3xl font-semibold tracking-tight sm:text-4xl">
                   Les majors de SeaTech mobilisables sur vos missions
                 </h3>
               </div>
               <p className="max-w-xs text-sm text-mist">
-                Nombre de prestations de notre catalogue auxquelles chaque filière contribue.
+                Nombre de prestations de notre catalogue auxquelles contribuent quelques-unes des filières
+                mobilisables. Liste non exhaustive, alternants compris.
               </p>
             </div>
             <ul className="mt-10 grid gap-px overflow-hidden rounded-2xl bg-white/10 sm:grid-cols-2 lg:grid-cols-3">

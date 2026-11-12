@@ -44,7 +44,7 @@ export const nav = [
 ];
 
 export const keyFigures = [
-  { value: "6", label: "filières SeaTech mobilisables" },
+  { value: "100 %", label: "des filières SeaTech mobilisables, alternants compris" },
   { value: "4", label: "pôles d'expertise" },
   { value: "16", label: "membres cotisants, de la 1A à la 3A" },
   { value: "2", label: "passations de bureau réussies" },
@@ -53,7 +53,7 @@ export const keyFigures = [
 export const methode = [
   {
     title: "Étude du besoin",
-    text: "Nous analysons votre demande avec vous et vous adressons une proposition personnalisée.",
+    text: "Nous analysons votre demande avec vous et vous adressons un devis gratuit et personnalisé, sous 9 jours.",
   },
   {
     title: "Convention d'étude",
@@ -79,8 +79,8 @@ export const atouts = [
     text: "SeaTech est la seule école d'ingénieurs publique de la région Sud à proposer une formation pluridisciplinaire tournée vers l'ingénierie marine, les matériaux, la mécanique, le numérique et la robotique. Sea'Lab mobilise ainsi des compétences rares, en lien direct avec l'écosystème maritime et de défense de Toulon.",
   },
   {
-    title: "Six filières, une seule équipe",
-    text: "Contrairement aux Junior-Entreprises mono-filière, Sea'Lab s'appuie sur les six majors de SeaTech. Une même mission peut croiser mécanique, logiciel et matériaux : un vrai atout pour les projets d'ingénierie transverses.",
+    title: "Toutes les filières, une seule équipe",
+    text: "Contrairement aux Junior-Entreprises mono-filière, Sea'Lab s'appuie sur l'ensemble des formations de SeaTech, sous statut étudiant comme en alternance. Les élèves alternants apportent en plus leur expérience de l'entreprise. Une même mission peut croiser mécanique, logiciel et matériaux : un vrai atout pour les projets d'ingénierie transverses.",
   },
   {
     title: "Un lien direct avec la recherche",
@@ -239,19 +239,19 @@ export const faq = [
   },
   {
     q: "Qui réalise les missions ?",
-    a: "Des élèves-ingénieurs de SeaTech, sélectionnés pour chaque étude selon les compétences requises parmi les six filières de l'école. Chaque étude est suivie par un responsable dédié, votre interlocuteur du début à la fin.",
+    a: "Des élèves-ingénieurs de SeaTech, sélectionnés pour chaque étude selon les compétences requises parmi toutes les filières de l'école, alternants compris. Chaque étude est suivie par un responsable dédié, votre interlocuteur du début à la fin.",
   },
   {
     q: "Comment se déroule une étude ?",
-    a: "Nous étudions d'abord votre besoin et vous adressons une proposition personnalisée. Une convention d'étude est ensuite signée et les intervenants sont sélectionnés. Un responsable dédié assure le suivi, puis le livrable vous est remis dans les délais, avec une phase de garantie. Une étude complémentaire peut prolonger le travail si besoin.",
+    a: "Nous étudions d'abord votre besoin et vous adressons un devis gratuit et personnalisé sous 9 jours. Une convention d'étude est ensuite signée et les intervenants sont sélectionnés. Un responsable dédié assure le suivi, puis le livrable vous est remis dans les délais, avec une phase de garantie. Une étude complémentaire peut prolonger le travail si besoin.",
   },
   {
     q: "Comment le prix est-il fixé ?",
-    a: "Les missions sont facturées en JEH (Jour-Étude-Homme), l'unité de référence des Junior-Entreprises, au tarif encadré par la CNJE. Le montant dépend du volume de travail nécessaire : contactez-nous pour recevoir une proposition adaptée à votre projet.",
+    a: "Les missions sont facturées en JEH (Jour-Étude-Homme), l'unité de référence des Junior-Entreprises, au tarif encadré par la CNJE. Le montant dépend du volume de travail nécessaire : demandez-nous un devis gratuit et sans engagement : vous recevez un devis détaillé sous 9 jours.",
   },
   {
     q: "Mon besoin n'apparaît pas dans la liste des prestations, que faire ?",
-    a: "Notre liste n'est pas exhaustive. Grâce aux six filières de SeaTech, nous pouvons étudier de nombreux sujets transverses. Décrivez-nous votre projet : nous vous dirons rapidement s'il est à notre portée.",
+    a: "Notre liste n'est pas exhaustive. Grâce à l'ensemble des filières de SeaTech, nous pouvons étudier de nombreux sujets transverses. Décrivez-nous votre projet : nous vous dirons rapidement s'il est à notre portée.",
   },
   {
     q: "Où en est Sea'Lab dans le parcours de la CNJE ?",

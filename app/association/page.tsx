@@ -46,9 +46,11 @@ export default function AssociationPage() {
                 enseignements en réalisant des missions rétribuées pour des professionnels.
               </p>
               <p>
-                Nos prestations couvrent les six filières de SeaTech (ingénierie marine, mécanique, génie logiciel,
-                matériaux, modélisation &amp; simulation, mécatronique &amp; robotique) et s&apos;appuient sur les
-                laboratoires et plateformes techniques mis à disposition par l&apos;école.
+                Nos prestations s&apos;appuient sur l&apos;ensemble des formations de SeaTech, sous statut étudiant
+                comme en alternance (ingénierie marine, mécanique, génie logiciel, systèmes numériques, matériaux,
+                modélisation &amp; simulation, mécatronique &amp; robotique…), ainsi que sur les laboratoires et
+                plateformes techniques mis à disposition par l&apos;école. Les élèves alternants peuvent aussi
+                intervenir et apportent leur expérience de l&apos;entreprise.
               </p>
               <p>
                 Sea&apos;Lab est membre de la <strong className="text-navy">Confédération Nationale des

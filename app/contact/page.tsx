@@ -8,7 +8,7 @@ import { faq, site } from "../data/site";
 export const metadata: Metadata = {
   title: "Contact",
   description:
-    "Contactez Sea'Lab, la Junior-Entreprise de SeaTech Toulon : décrivez votre projet et recevez une proposition personnalisée.",
+    "Contactez Sea'Lab, la Junior-Entreprise de SeaTech Toulon : décrivez votre projet et recevez un devis gratuit et personnalisé sous 9 jours.",
   alternates: { canonical: "/contact" },
 };
 
@@ -25,7 +25,7 @@ const faqLd = {
 const suite = [
   { title: "Nous vous recontactons", text: "Un membre du bureau revient vers vous pour échanger sur votre projet." },
   { title: "Étude du besoin", text: "Nous précisons ensemble le contexte, les objectifs et les livrables attendus." },
-  { title: "Proposition personnalisée", text: "Vous recevez une proposition adaptée, puis la convention d'étude si elle vous convient." },
+  { title: "Devis gratuit et personnalisé", text: "Vous recevez un devis détaillé sous 9 jours, sans engagement, puis la convention d'étude s'il vous convient." },
 ];
 
 export default function ContactPage() {
@@ -39,7 +39,7 @@ export default function ContactPage() {
             Parlons de <span className="text-sea">votre projet.</span>
           </>
         }
-        lead="Un besoin en ingénierie, en digitalisation, en environnement ou en stratégie ? Décrivez-le en quelques lignes : nous revenons vers vous avec une proposition personnalisée."
+        lead="Un besoin en ingénierie, en digitalisation, en environnement ou en stratégie ? Décrivez-le en quelques lignes : nous revenons vers vous avec un devis gratuit et personnalisé."
       />
 
       <section className="bg-white py-20 sm:py-28">
